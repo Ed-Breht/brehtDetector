@@ -14,13 +14,13 @@ services:
       - front
 
 
-  backend:
+  back:
     build:
       context: ./back
     networks:
       - dev
 
-  fontend:
+  front:
     build:
       context: ./front
     networks:
