@@ -1,32 +1,29 @@
-# Используем официальный образ Python
 FROM python:3.9-slim
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Устанавливаем системные зависимости для OpenCV и других библиотек
+# Устанавливаем системные зависимости в один слой и очищаем кэш
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
-# Копируем зависимости
-COPY requirements.txt requirements.txt
+# Сначала копируем только requirements.txt
+COPY requirements.txt .
 
-# Устанавливаем Python зависимости
-RUN pip install -r requirements.txt
+# Устанавливаем зависимости с оптимизацией
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем остальные файлы
 COPY . .
 
-# Копируем модель
+# Копируем модель (если она большая, рассмотрите вариант скачивания в рантайме)
 COPY best.pt /app/best.pt
 
-# Открываем порт
 EXPOSE 8000
 
-# Запускаем приложение
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
