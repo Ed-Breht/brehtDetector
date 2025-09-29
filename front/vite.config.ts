@@ -6,22 +6,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
     preview: {
         port: 4173,
-        allowedHosts: [
-            'brehtdetector.ru',
-            'localhost',
-            '127.0.0.1'
-        ],
+        allowedHosts: true, // Разрешить все хосты
         strictPort: true,
-        host: true,
+        host: '0.0.0.0',
     },
     server: {
         port: 4173,
-        host: true,
-        allowedHosts: [
-            'brehtdetector.ru',
-            'localhost',
-            '127.0.0.1'
-        ]
+        host: '0.0.0.0',
+        allowedHosts: true // Разрешить все хосты
     },
     plugins: [react(), VitePWA({
         registerType: 'prompt',
