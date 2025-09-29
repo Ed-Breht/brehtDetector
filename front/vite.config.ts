@@ -4,8 +4,13 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    server: {
+        host: true, // Добавьте это
+        allowedHosts: true
+    },
     preview: {
-        allowedHosts: ['brehtdetector.ru']
+        host: true, // Добавьте это
+        allowedHosts: true
     },
     plugins: [react(), VitePWA({
         registerType: 'prompt',
