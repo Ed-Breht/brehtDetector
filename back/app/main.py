@@ -13,7 +13,7 @@ app = FastAPI(title="YOLOv8 Object Detection API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://199.111.2.3"],  # Для разработки, в production укажите конкретные домены
+    allow_origins=["http://87.228.102.136"],  # Для разработки, в production укажите конкретные домены
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
