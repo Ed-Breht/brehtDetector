@@ -13,6 +13,7 @@ interface StoredImage {
 function App() {
     const [image, setImage] = useState<File | null>(null);
     const [processedImage, setProcessedImage] = useState<null | string>(null);
+    const [processedBlob, setProcessedBlob] = useState<Blob | null>(null); // Добавляем состояние для хранения blob
     const [loading, setLoading] = useState(false);
     const [history, setHistory] = useState<StoredImage[]>([]);
     const [showHistory, setShowHistory] = useState(false);
@@ -62,7 +63,7 @@ function App() {
 
             const [originalBuffer, processedBuffer] = await Promise.all([
                 fileToArrayBuffer(originalFile),
-                fileToArrayBuffer(new File([processedBlob], 'processed.jpg'))
+                processedBlob.arrayBuffer()
             ]);
 
             const imageData: StoredImage = {
@@ -135,6 +136,7 @@ function App() {
             const file = e.target.files[0];
             setImage(file);
             setProcessedImage(null);
+            setProcessedBlob(null); // Сбрасываем blob при загрузке нового изображения
         }
     };
 
@@ -154,6 +156,7 @@ function App() {
             const processedUrl = URL.createObjectURL(processedBlob);
 
             setProcessedImage(processedUrl);
+            setProcessedBlob(processedBlob); // Сохраняем blob для скачивания
             await saveImageToDB(image, processedBlob);
 
         } catch (error) {
@@ -173,6 +176,7 @@ function App() {
             const file = e.dataTransfer.files[0];
             setImage(file);
             setProcessedImage(null);
+            setProcessedBlob(null);
         }
     };
 
@@ -192,12 +196,18 @@ function App() {
 
         setImage(file);
         setProcessedImage(processedUrl);
+
+        // Создаем blob из ArrayBuffer для скачивания
+        const blob = new Blob([storedImage.processed], { type: 'image/jpeg' });
+        setProcessedBlob(blob);
+
         setShowHistory(false);
     };
 
     const clearImages = () => {
         setImage(null);
         setProcessedImage(null);
+        setProcessedBlob(null); // Сбрасываем blob
         if (fileInputRef.current) fileInputRef.current.value = '';
         if (cameraInputRef.current) cameraInputRef.current.value = '';
     };
@@ -245,6 +255,14 @@ function App() {
         }
     };
 
+    // Функция для получения URL для скачивания
+    const getDownloadUrl = (): string => {
+        if (processedBlob) {
+            return URL.createObjectURL(processedBlob);
+        }
+        return processedImage || '';
+    };
+
     // Очистка blob URLs при размонтировании
     useEffect(() => {
         return () => {
@@ -254,8 +272,9 @@ function App() {
             });
             if (processedImage) URL.revokeObjectURL(processedImage);
             if (image) URL.revokeObjectURL(getImageSource(image));
+            if (processedBlob) URL.revokeObjectURL(URL.createObjectURL(processedBlob));
         };
-    }, [history, processedImage, image]);
+    }, [history, processedImage, image, processedBlob]);
 
     return (
         <div className="app">
@@ -381,7 +400,7 @@ function App() {
                                     </div>
                                     <div className="result-actions">
                                         <a
-                                            href={processedImage}
+                                            href={getDownloadUrl()} // Используем функцию для получения URL
                                             download={`detected-${Date.now()}.jpg`}
                                             className="download-btn"
                                         >
