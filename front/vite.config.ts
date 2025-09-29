@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
     preview: {
-        allowedHosts: true
+        allowedHosts: ['brehtdetector.ru']
     },
     plugins: [react(), VitePWA({
         registerType: 'prompt',
