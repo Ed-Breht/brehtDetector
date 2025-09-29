@@ -146,7 +146,7 @@ function App() {
         formData.append('file', image);
 
         try {
-            const response = await axios.post('https://brehtdetector.ru/api/predict', formData, {
+            const response = await axios.post('https://brehtdetector.ru/predict', formData, {
                 responseType: 'blob'
             });
 
