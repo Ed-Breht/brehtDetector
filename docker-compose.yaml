@@ -1,27 +1,33 @@
-networks:
-  dev:
+version: '3.8'
 
 services:
   nginx:
-    image: nginx:stable-alpine
+    image: nginx:alpine
     ports:
       - "80:80"
-      - "443:443"
     volumes:
-      - './nginx.conf:/etc/nginx/nginx.conf'
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - back
-      - front
-
+    networks:
+      - app-network
 
   back:
-    build:
-      context: ./back
+    build: ./back
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./back:/app
     networks:
-      - dev
+      - app-network
 
   front:
-    build:
-      context: ./front
+    build: ./front
+    ports:
+      - "3000:3000"
     networks:
-        - dev
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
