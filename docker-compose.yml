@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Backend service
+  # Backend service - ИСПРАВЛЕНО: порт 8000
   backend:
     build: ./back
     container_name: breht-backend
@@ -9,17 +9,17 @@ services:
     environment:
       - NODE_ENV=production
     ports:
-      - "3001:3001"
+      - "8000:8000"  # Было 3001:3001
     networks:
       - breht-network
 
-  # Frontend service
+  # Frontend service - ИСПРАВЛЕНО: порт 4173
   frontend:
     build: ./front
     container_name: breht-frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "4173:4173"  # Было 3000:3000
     depends_on:
       - backend
     networks:
@@ -32,10 +32,8 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/nginx/ssl
     depends_on:
       - frontend
       - backend
