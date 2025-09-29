@@ -146,7 +146,7 @@ function App() {
         formData.append('file', image);
 
         try {
-            const response = await axios.post('http://87.228.102.136/predict', formData, {
+            const response = await axios.post('http://87.228.102.136:8000/predict', formData, {
                 responseType: 'blob'
             });
 
